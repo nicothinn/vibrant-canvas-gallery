@@ -1,5 +1,4 @@
-
-import { Heart, Instagram, Facebook, Twitter, Linkedin } from 'lucide-react';
+import { Heart, Instagram, Facebook, MessageCircle } from 'lucide-react';
 
 const Footer = () => {
   return (
@@ -7,85 +6,83 @@ const Footer = () => {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
           <div>
-            <h3 className="text-2xl font-playfair font-bold mb-6">Artistry</h3>
+            <h3 className="text-2xl font-playfair font-bold mb-6">CARURA</h3>
             <p className="text-gray-400 font-montserrat mb-6">
-              Creating beautiful murals and decorative art that transforms spaces and tells stories.
+              Creando murales artísticos y decorativos que transforman espacios y cuentan historias.
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-primary transition-colors duration-300">
+              <a href="https://www.instagram.com/caruritabarona/" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-primary transition-colors duration-300">
                 <Instagram size={20} />
               </a>
-              <a href="#" className="text-gray-400 hover:text-primary transition-colors duration-300">
+              <a href="https://www.facebook.com/carolina.irurita" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-primary transition-colors duration-300">
                 <Facebook size={20} />
               </a>
-              <a href="#" className="text-gray-400 hover:text-primary transition-colors duration-300">
-                <Twitter size={20} />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-primary transition-colors duration-300">
-                <Linkedin size={20} />
+              <a href="https://wa.me/573112384260?text=Hola%20Carolina%2C%20quiero%20conocer%20más%20sobre%20tus%20murales
+" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-primary transition-colors duration-300">
+                <MessageCircle size={20} />
               </a>
             </div>
           </div>
-          
+
           <div>
-            <h4 className="text-lg font-playfair font-semibold mb-6">Quick Links</h4>
+            <h4 className="text-lg font-playfair font-semibold mb-6">Enlaces rápidos</h4>
             <ul className="space-y-3 font-montserrat">
               <li>
                 <a href="#hero" className="text-gray-400 hover:text-white transition-colors duration-300">
-                  Home
+                  Inicio
                 </a>
               </li>
               <li>
                 <a href="#projects" className="text-gray-400 hover:text-white transition-colors duration-300">
-                  Projects
+                  Proyectos
                 </a>
               </li>
               <li>
                 <a href="#about" className="text-gray-400 hover:text-white transition-colors duration-300">
-                  About
+                  Sobre mí
                 </a>
               </li>
               <li>
                 <a href="#testimonials" className="text-gray-400 hover:text-white transition-colors duration-300">
-                  Testimonials
+                  Testimonios
                 </a>
               </li>
               <li>
                 <a href="#contact" className="text-gray-400 hover:text-white transition-colors duration-300">
-                  Contact
+                  Contacto
                 </a>
               </li>
             </ul>
           </div>
-          
+
           <div>
-            <h4 className="text-lg font-playfair font-semibold mb-6">Services</h4>
+            <h4 className="text-lg font-playfair font-semibold mb-6">Servicios</h4>
             <ul className="space-y-3 font-montserrat">
               <li className="text-gray-400">
-                Custom Murals
+                Murales personalizados
               </li>
               <li className="text-gray-400">
-                Interior Decoration
+                Decoración interior
               </li>
               <li className="text-gray-400">
-                Residential Projects
+                Proyectos residenciales
               </li>
               <li className="text-gray-400">
-                Commercial Spaces
+                Espacios comerciales
               </li>
               <li className="text-gray-400">
-                Consultation Services
+                Asesoría artística
               </li>
             </ul>
           </div>
         </div>
-        
+
         <div className="border-t border-gray-800 pt-8 mt-8 text-center text-gray-500 font-montserrat text-sm">
           <p>
-            © {new Date().getFullYear()} Artistry Portfolio. All rights reserved.
+            © {new Date().getFullYear()} CARURA Portfolio. Todos los derechos reservados.
           </p>
           <p className="mt-2 flex items-center justify-center">
-            Made with <Heart size={14} className="mx-1 text-primary" /> for beautiful spaces
+            Creado con <Heart size={14} className="mx-1 text-primary" /> para espacios hermosos
           </p>
         </div>
       </div>

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -16,11 +15,11 @@ const Navbar = () => {
   }, []);
 
   const navLinks = [
-    { name: 'Home', href: '#hero' },
-    { name: 'Projects', href: '#projects' },
-    { name: 'About', href: '#about' },
-    { name: 'Testimonials', href: '#testimonials' },
-    { name: 'Contact', href: '#contact' },
+    { name: 'Inicio', href: '#hero' },
+    { name: 'Proyectos', href: '#projects' },
+    { name: 'Sobre mí', href: '#about' },
+    { name: 'Testimonios', href: '#testimonials' },
+    { name: 'Contacto', href: '#contact' },
   ];
 
   return (
@@ -34,10 +33,10 @@ const Navbar = () => {
           to="/" 
           className="text-2xl font-playfair font-bold text-gray-900"
         >
-          Artistry
+          CARURA
         </Link>
 
-        {/* Desktop Navigation */}
+        {/* Navegación de escritorio */}
         <div className="hidden md:flex space-x-8">
           {navLinks.map((link) => (
             <a
@@ -50,7 +49,7 @@ const Navbar = () => {
           ))}
         </div>
 
-        {/* Mobile Navigation Toggle */}
+        {/* Toggle menú móvil */}
         <button
           className="md:hidden text-gray-700"
           onClick={() => setIsOpen(!isOpen)}
@@ -59,7 +58,7 @@ const Navbar = () => {
         </button>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Menú móvil */}
       {isOpen && (
         <div className="md:hidden bg-white absolute top-full left-0 w-full border-t border-gray-100 animate-fade-in">
           <div className="container mx-auto px-4 py-3 flex flex-col space-y-3">
