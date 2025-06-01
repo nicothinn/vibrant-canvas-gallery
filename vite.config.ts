@@ -5,7 +5,6 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  base: "/vibrant-canvas-gallery/", // ⚠️ nombre exacto del repositorio de GitHub
   server: {
     host: "::",
     port: 8080,
