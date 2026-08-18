@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Star, User } from 'lucide-react';
 
 interface Testimonial {
   id: number;
@@ -11,12 +11,14 @@ interface Testimonial {
   project: string;
 }
 
+// Coloca las imágenes en public/images/testimonials/ con estos nombres
+// o cambia las rutas abajo por las que uses
 const testimonials: Testimonial[] = [
   {
     id: 1,
     name: 'Cliente 1',
     role: 'Propietaria de residencia',
-    avatar: '/images/testimonials/sarah.jpg',
+    avatar: '/images/testimonials/cliente1.jpg',
     quote: 'El mural del comedor es una verdadera obra de arte. Cada visita lo elogia y se ha vuelto el alma del espacio. No podríamos estar más felices con el resultado.',
     rating: 5,
     project: 'Mural comedor de paisaje con pájaros',
@@ -25,7 +27,7 @@ const testimonials: Testimonial[] = [
     id: 2,
     name: 'Cliente 2',
     role: 'Dueño de oficina',
-    avatar: '/images/testimonials/michael.jpg',
+    avatar: '/images/testimonials/cliente2.jpg',
     quote: 'Las palmas sin fondo fueron una elección perfecta para nuestra oficina. Aporta frescura sin saturar el ambiente. Sutil y elegante.',
     rating: 5,
     project: 'Mural palmas sin fondo',
@@ -34,7 +36,7 @@ const testimonials: Testimonial[] = [
     id: 3,
     name: 'Cliente 3',
     role: 'Restaurador italiano',
-    avatar: '/images/testimonials/jessica.jpg',
+    avatar: '/images/testimonials/cliente3.jpg',
     quote: 'El mural floral inspirado en frescos italianos transformó por completo el ambiente del restaurante. Los clientes quedan fascinados con su belleza.',
     rating: 5,
     project: 'Mural flores réplica de fresco italiano',
@@ -43,7 +45,7 @@ const testimonials: Testimonial[] = [
     id: 4,
     name: 'Cliente 4',
     role: 'Diseñadora de interiores',
-    avatar: '/images/testimonials/user4.jpg',
+    avatar: '/images/testimonials/cliente4.jpg',
     quote: 'El mural del baño es simplemente mágico. Convierte un espacio común en una experiencia tropical cada vez que se entra.',
     rating: 5,
     project: 'Mural baño paisaje de yarumos con pericos',
@@ -52,7 +54,7 @@ const testimonials: Testimonial[] = [
     id: 5,
     name: 'Cliente 5',
     role: 'Coordinador de cultura',
-    avatar: '/images/testimonials/user5.jpg',
+    avatar: '/images/testimonials/cliente5.jpg',
     quote: 'Este mural en el aeropuerto es un orgullo regional. Representa nuestra biodiversidad y ha recibido comentarios muy positivos de turistas.',
     rating: 5,
     project: 'Mural Aeropuerto Alfonso Bonilla Aragón',
@@ -61,12 +63,32 @@ const testimonials: Testimonial[] = [
     id: 6,
     name: 'Cliente 6',
     role: 'Gerente hotelero',
-    avatar: '/images/testimonials/user6.jpg',
+    avatar: '/images/testimonials/cliente6.jpg',
     quote: 'Los huéspedes aman el mural del restaurante. Agrega carácter, color y un toque de la cultura cafetera que representa perfectamente nuestra región.',
     rating: 5,
     project: 'Mural Restaurante Hotel Las Camelias',
   },
 ];
+
+// Componente de avatar con fallback
+const Avatar = ({ src, name }: { src: string; name: string }) => {
+  const [error, setError] = useState(false);
+  if (error) {
+    return (
+      <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+        <User size={32} className="text-primary" />
+      </div>
+    );
+  }
+  return (
+    <img
+      src={src}
+      alt={name}
+      className="w-20 h-20 rounded-full object-cover mb-4"
+      onError={() => setError(true)}
+    />
+  );
+};
 
 
 const Testimonials = () => {
@@ -98,11 +120,7 @@ const Testimonials = () => {
           <div className="relative bg-white rounded-xl shadow-md p-6 md:p-10">
             <div className="flex flex-col md:flex-row gap-6 items-center md:items-start">
               <div className="md:w-1/4 flex flex-col items-center">
-                <img
-                  src={testimonials[currentIndex].avatar}
-                  alt={testimonials[currentIndex].name}
-                  className="w-20 h-20 rounded-full object-cover mb-4"
-                />
+                <Avatar src={testimonials[currentIndex].avatar} name={testimonials[currentIndex].name} />
                 <h4 className="font-playfair font-semibold text-center">
                   {testimonials[currentIndex].name}
                 </h4>

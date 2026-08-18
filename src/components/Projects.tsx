@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
-import { ChevronRight, ChevronLeft } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ChevronRight } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
   Carousel,
@@ -193,6 +193,7 @@ const Projects = () => {
   const [filter, setFilter] = useState<string>('all');
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
   const [projectsData, setProjectsData] = useState<Project[]>(defaultProjectsData);
   
   // Cargar proyectos desde localStorage al montar el componente
@@ -332,11 +333,14 @@ const Projects = () => {
                   <CarouselContent>
                     {selectedProject.images?.map((image, index) => (
                       <CarouselItem key={index}>
-                        <div className="h-64 md:h-80">
+                        <div
+                          className="h-64 md:h-80 cursor-pointer"
+                          onClick={() => setLightboxImage(image)}
+                        >
                           <img 
                             src={image} 
                             alt={`${selectedProject.title} - Image ${index + 1}`}
-                            className="w-full h-full object-cover rounded-lg" 
+                            className="w-full h-full object-cover rounded-lg hover:opacity-90 transition-opacity" 
                           />
                         </div>
                       </CarouselItem>
@@ -370,81 +374,41 @@ const Projects = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Lightbox - imagen a pantalla completa */}
+      {lightboxImage && (
+        <div
+          className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center cursor-pointer"
+          onClick={() => setLightboxImage(null)}
+        >
+          <img
+            src={lightboxImage}
+            alt="Imagen completa"
+            className="max-w-[95vw] max-h-[95vh] object-contain"
+          />
+          <button
+            onClick={(e) => { e.stopPropagation(); setLightboxImage(null); }}
+            className="absolute top-4 right-4 text-white bg-black/50 hover:bg-black/70 rounded-full w-10 h-10 flex items-center justify-center text-xl"
+          >
+            ×
+          </button>
+        </div>
+      )}
     </section>
   );
 };
 
-// Componente de card con carrusel hover + flechas
+// Componente de card simple (sin carrusel hover)
 const ProjectCard = ({ project, onOpen }: { project: Project; onOpen: (p: Project) => void }) => {
-  const intervalRef = useRef<number | null>(null);
-  const [imgIndex, setImgIndex] = useState(0);
-  const images = project.images && project.images.length > 0 ? project.images : [project.image];
-
-  const goTo = (index: number) => {
-    const clamped = Math.max(0, Math.min(index, images.length - 1));
-    setImgIndex(clamped);
-  };
-
-  const startAutoScroll = () => {
-    if (images.length <= 1) return;
-    intervalRef.current = window.setInterval(() => {
-      setImgIndex(prev => (prev + 1) % images.length);
-    }, 1500);
-  };
-
-  const stopAutoScroll = () => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-  };
-
-  useEffect(() => {
-    return () => stopAutoScroll();
-  }, []);
-
   return (
-    <div
-      className="bg-white rounded-lg overflow-hidden shadow-md group"
-      onMouseEnter={startAutoScroll}
-      onMouseLeave={stopAutoScroll}
-    >
+    <div className="bg-white rounded-lg overflow-hidden shadow-md group">
       <div className="relative overflow-hidden h-64">
-        <div
-          className="flex h-full transition-transform duration-500 ease-in-out"
-          style={{ transform: `translateX(-${imgIndex * 100}%)`, width: `${images.length * 100}%` }}
-        >
-          {images.map((img, i) => (
-            <div key={i} style={{ width: `${100 / images.length}%` }} className="h-full flex-shrink-0">
-              <img
-                src={img}
-                alt={`${project.title} ${i + 1}`}
-                className="w-full h-full object-cover"
-              />
-            </div>
-          ))}
-        </div>
-        {images.length > 1 && (
-          <>
-            <button
-              onClick={(e) => { e.stopPropagation(); goTo(imgIndex - 1); }}
-              className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10"
-            >
-              <ChevronLeft size={18} />
-            </button>
-            <button
-              onClick={(e) => { e.stopPropagation(); goTo(imgIndex + 1); }}
-              className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10"
-            >
-              <ChevronRight size={18} />
-            </button>
-            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 z-10">
-              {images.map((_, i) => (
-                <div key={i} className={`w-1.5 h-1.5 rounded-full transition-colors ${i === imgIndex ? 'bg-white' : 'bg-white/50'}`} />
-              ))}
-            </div>
-          </>
-        )}
+        <img
+          src={project.image}
+          alt={project.title}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          loading="lazy"
+        />
       </div>
 
       <div className="p-6">
@@ -459,7 +423,7 @@ const ProjectCard = ({ project, onOpen }: { project: Project; onOpen: (p: Projec
             onClick={() => onOpen(project)}
             className="inline-flex items-center text-primary hover:text-primary/80 font-montserrat text-sm transition-colors duration-300"
           >
-            View Details <ChevronRight size={16} className="ml-1" />
+            Ver detalles <ChevronRight size={16} className="ml-1" />
           </button>
         </div>
       </div>

@@ -6,9 +6,10 @@ const Hero = () => {
       <div 
         className="absolute inset-0 z-0 bg-cover bg-center" 
         style={{ 
-          backgroundImage: 'url(/images/1729094403747.jpg',
+          backgroundImage: 'url(/images/1729094403747.jpg)',
           filter: 'brightness(0.7)'
         }}
+        fetchpriority="high"
       ></div>
       
       <div className="container mx-auto px-4 pt-20 z-10 flex flex-col justify-center items-center text-center h-full">

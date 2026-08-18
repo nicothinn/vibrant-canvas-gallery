@@ -197,6 +197,7 @@ categories[2].images = mueblesImages;
 const Catalog = () => {
   const [selectedCategory, setSelectedCategory] = useState<CatalogCategory | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
   const openCategory = (cat: CatalogCategory) => {
     setSelectedCategory(cat);
@@ -267,11 +268,14 @@ const Catalog = () => {
 
               <div className="mt-4">
                 {/* Imagen principal */}
-                <div className="relative h-80 md:h-96 rounded-lg overflow-hidden mb-4">
+                <div
+                  className="relative h-80 md:h-96 rounded-lg overflow-hidden mb-4 cursor-pointer"
+                  onClick={() => setLightboxImage(selectedCategory.images[currentImageIndex])}
+                >
                   <img
                     src={selectedCategory.images[currentImageIndex]}
                     alt={`${selectedCategory.name} ${currentImageIndex + 1}`}
-                    className="w-full h-full object-contain bg-gray-100"
+                    className="w-full h-full object-contain bg-gray-100 hover:opacity-90 transition-opacity"
                     loading="eager"
                   />
                   <button
@@ -314,6 +318,26 @@ const Catalog = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Lightbox - imagen a pantalla completa */}
+      {lightboxImage && (
+        <div
+          className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center cursor-pointer"
+          onClick={() => setLightboxImage(null)}
+        >
+          <img
+            src={lightboxImage}
+            alt="Imagen completa"
+            className="max-w-[95vw] max-h-[95vh] object-contain"
+          />
+          <button
+            onClick={(e) => { e.stopPropagation(); setLightboxImage(null); }}
+            className="absolute top-4 right-4 text-white bg-black/50 hover:bg-black/70 rounded-full w-10 h-10 flex items-center justify-center text-xl"
+          >
+            ×
+          </button>
+        </div>
+      )}
     </section>
   );
 };
