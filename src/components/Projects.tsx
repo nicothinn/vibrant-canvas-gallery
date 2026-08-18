@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { ChevronRight } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { ChevronRight, ChevronLeft } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
   Carousel,
@@ -29,8 +29,16 @@ const defaultProjectsData: Project[] = [
     description: "Mural que representa un paisaje natural lleno de aves, ideal para ambientar espacios de comedor.",
     longDescription: "Este mural fue diseñado para transmitir serenidad en un comedor familiar. Las aves y la vegetación representan la conexión con la naturaleza, generando una experiencia visual calmada y acogedora.",
     category: "mural",
-    image: "/images/1729034563144.jpg",
-    images: ["/images/1729034563144.jpg"],
+    image: "/images/mural_Mural_comedor_de_paisaje_con_p_jaros_2022-07-22_494224956_10239425514595297_3639531338437676164_n.jpg",
+    images: [
+      "/images/mural_Mural_comedor_de_paisaje_con_p_jaros_2022-07-22_494224956_10239425514595297_3639531338437676164_n.jpg",
+      "/images/mural_Mural_comedor_de_paisaje_con_p_jaros_2022-07-22_494204421_10239425513595272_7202555764685478419_n.jpg",
+      "/images/mural_Mural_comedor_de_paisaje_con_p_jaros_2022-07-22_494045495_10239425513435268_8080318881743614212_n.jpg",
+      "/images/mural_Mural_comedor_de_paisaje_con_p_jaros_2022-07-22_493806494_10239425513075259_1434242538574443313_n.jpg",
+      "/images/mural_Mural_comedor_de_paisaje_con_p_jaros_2022-07-22_493521267_10239425511395217_8310915540777113648_n.jpg",
+      "/images/mural_Mural_comedor_de_paisaje_con_p_jaros_2022-07-22_493141379_10239425513395267_1442402771610715953_n.jpg",
+      "/images/mural_Mural_comedor_de_paisaje_con_p_jaros_2022-07-22_492613626_10239425512715250_3595067001396455707_n.jpg",
+    ],
     location: "Residencia privada, Cali",
     year: 2022,
   },
@@ -40,8 +48,11 @@ const defaultProjectsData: Project[] = [
     description: "Mural con palmas tropicales en estilo minimalista y sin fondo definido.",
     longDescription: "Un mural que enfatiza la belleza de las palmas tropicales a través de trazos limpios y sin distracciones. Ideal para espacios modernos que buscan un toque natural sin saturar el ambiente.",
     category: "mural",
-    image: "/images/1729036482435.jpg",
-    images: ["/images/1729036482435.jpg"],
+    image: "/images/mural_Mural_palmas_sin_fondo_2022-09-13_493820138_10239482348856118_7486277446020013019_n.jpg",
+    images: [
+      "/images/mural_Mural_palmas_sin_fondo_2022-09-13_493820138_10239482348856118_7486277446020013019_n.jpg",
+      "/images/1729036482435.jpg",
+    ],
     location: "Oficina privada, Cali",
     year: 2022,
   },
@@ -62,8 +73,38 @@ const defaultProjectsData: Project[] = [
     description: "Mural en baño con yarumos y pericos que transportan a un ambiente selvático.",
     longDescription: "Diseñado para baños modernos con un giro artístico, este mural presenta un entorno selvático que transforma completamente el espacio habitual en una experiencia visual inmersiva.",
     category: "mural",
-    image: "/images/1729093390316.jpg",
-    images: ["/images/1729093390316.jpg"],
+    image: "/images/mural_Mural_ba_o_paisaje_de_yarumos_con_pericos_2023-01-30_498589134_10239735081614279_3086576744632452453_n.jpg",
+    images: [
+      "/images/mural_Mural_ba_o_paisaje_de_yarumos_con_pericos_2023-01-30_498589134_10239735081614279_3086576744632452453_n.jpg",
+      "/images/mural_Mural_ba_o_paisaje_de_yarumos_con_pericos_2023-01-30_498925467_10239735082494301_5825528736668988951_n.jpg",
+      "/images/mural_Mural_ba_o_paisaje_de_yarumos_con_pericos_2023-01-30_498925678_10239735080974263_2596687581242017258_n.jpg",
+      "/images/mural_Mural_ba_o_paisaje_de_yarumos_con_pericos_2023-01-30_498943443_10239735078654205_2562820292423820739_n.jpg",
+      "/images/mural_Mural_ba_o_paisaje_de_yarumos_con_pericos_2023-01-30_499168131_10239735081774283_2655836894397021032_n.jpg",
+      "/images/mural_Mural_ba_o_paisaje_de_yarumos_con_pericos_2023-01-30_499237441_10239735081094266_3980342854668117591_n.jpg",
+      "/images/mural_Mural_ba_o_paisaje_de_yarumos_con_pericos_2023-02-02_498191408_10239736803337321_7104182620876595734_n.jpg",
+      "/images/mural_Mural_ba_o_paisaje_de_yarumos_con_pericos_2023-02-02_498278066_10239736805977387_6404489046111607693_n.jpg",
+      "/images/mural_Mural_ba_o_paisaje_de_yarumos_con_pericos_2023-02-02_498336375_10239736805657379_3547879807925059981_n.jpg",
+      "/images/mural_Mural_ba_o_paisaje_de_yarumos_con_pericos_2023-02-02_498632958_10239736802937311_3132409505961784483_n.jpg",
+      "/images/mural_Mural_ba_o_paisaje_de_yarumos_con_pericos_2023-02-02_498657958_10239736807697430_3350050083726299206_n.jpg",
+      "/images/mural_Mural_ba_o_paisaje_de_yarumos_con_pericos_2023-02-02_499050468_10239736807737431_1899025697703148678_n.jpg",
+      "/images/mural_Mural_ba_o_paisaje_de_yarumos_con_pericos_2023-02-02_499051598_10239736803097315_8223895831786598878_n.jpg",
+      "/images/mural_Mural_ba_o_paisaje_de_yarumos_con_pericos_2023-02-02_499223323_10239736805697380_3857381335942777352_n.jpg",
+      "/images/mural_Mural_ba_o_paisaje_de_yarumos_con_pericos_2023-02-02_499243327_10239736803137316_1415463444933064134_n.jpg",
+      "/images/mural_Mural_ba_o_paisaje_de_yarumos_con_pericos_2023-02-02_499359738_10239736808217443_6628849658047351242_n.jpg",
+      "/images/mural_Mural_ba_o_paisaje_de_yarumos_con_pericos_2023-02-02_499407460_10239736803497325_890566036473565376_n.jpg",
+      "/images/mural_Mural_ba_o_paisaje_de_yarumos_con_pericos_2023-02-02_499668846_10239736806817408_78515284646543088_n.jpg",
+      "/images/mural_Mural_ba_o_paisaje_de_yarumos_con_pericos_2023-02-02_499716383_10239736803577327_8688704242942068979_n.jpg",
+      "/images/mural_Mural_ba_o_paisaje_de_yarumos_con_pericos_2023-02-02_499756931_10239736806737406_9041892298694250220_n.jpg",
+      "/images/mural_Mural_ba_o_paisaje_de_yarumos_con_pericos_2023-02-03_498314304_10239736815577627_2579534843182663390_n.jpg",
+      "/images/mural_Mural_ba_o_paisaje_de_yarumos_con_pericos_2023-02-03_498626133_10239736814497600_7849590600901926100_n.jpg",
+      "/images/mural_Mural_ba_o_paisaje_de_yarumos_con_pericos_2023-02-03_498979934_10239736814577602_3346746071244585163_n.jpg",
+      "/images/mural_Mural_ba_o_paisaje_de_yarumos_con_pericos_2023-02-03_499407450_10239736813297570_1537817240706111174_n.jpg",
+      "/images/mural_Mural_ba_o_paisaje_de_yarumos_con_pericos_2023-02-03_499693808_10239736813257569_125314893028443370_n.jpg",
+      "/images/mural_Mural_ba_o_paisaje_de_yarumos_con_pericos_2023-02-03_499704809_10239736813817583_7766260436013743529_n.jpg",
+      "/images/mural_Mural_ba_o_paisaje_de_yarumos_con_pericos_2023-02-03_499724879_10239736813657579_8657275482035005401_n.jpg",
+      "/images/mural_Mural_ba_o_paisaje_de_yarumos_con_pericos_2023-02-03_499735260_10239736814697605_2287731135075270420_n.jpg",
+      "/images/mural_Mural_ba_o_paisaje_de_yarumos_con_pericos_2023-02-03_499887351_10239736813737581_4679919288204423132_n.jpg",
+    ],
     location: "Apartamento residencial, Medellín",
     year: 2023,
   },
@@ -73,21 +114,78 @@ const defaultProjectsData: Project[] = [
     description: "Mural público de gran escala en uno de los aeropuertos principales del país.",
     longDescription: "Este proyecto conmemorativo busca resaltar la biodiversidad vallecaucana, dando la bienvenida a los viajeros con una obra de arte que combina fauna, flora y simbolismo cultural regional.",
     category: "mural",
-    image: "https://scontent.fclo3-2.fna.fbcdn.net/v/t39.30808-6/500884651_9652179548227351_1047890239159481394_n.jpg?stp=dst-jpg_s720x720_tt6&_nc_cat=108&ccb=1-7&_nc_sid=cc71e4&_nc_ohc=BXwP51rDrKsQ7kNvwEhLQxd&_nc_oc=AdmBrc1j5Vq54Q3pMAeqGpna5LuPPXvUV6d_BTcHAyp9RaXG4DW9F0gxEqyRyJlOwKU&_nc_zt=23&_nc_ht=scontent.fclo3-2.fna&_nc_gid=7kmGhFXAuHIeRpEQhTEx_w&oh=00_AfKMpsclFTIohOe_vEVayl4tbIlggG6ao3hRzIQj1Wd8Ww&oe=68416BE5",
-    images: ["/images/1729093711494.jpg"],
+    image: "/images/mural_murales_del_aeropuerto_2023-07-31_505725913_10240059673968885_2274919378495181605_n.jpg",
+    images: [
+      "/images/mural_murales_del_aeropuerto_2023-07-31_505725913_10240059673968885_2274919378495181605_n.jpg",
+      "/images/mural_murales_del_aeropuerto_2023-07-31_505692669_10240059672008836_5437300598033241516_n.jpg",
+      "/images/mural_murales_del_aeropuerto_2023-07-31_505581127_10240059673488873_4575802864761623828_n.jpg",
+      "/images/mural_murales_del_aeropuerto_2023-07-31_505496217_10240059673928884_1988031976829416754_n.jpg",
+      "/images/mural_murales_del_aeropuerto_2023-07-31_505424024_10240059673688878_7295982795210525405_n.jpg",
+      "/images/mural_murales_del_aeropuerto_2023-07-31_505417962_10240059670608801_3400643918472303999_n.jpg",
+      "/images/mural_murales_del_aeropuerto_2023-07-31_505393862_10240059672128839_4842944561318399344_n.jpg",
+      "/images/mural_murales_del_aeropuerto_2023-07-31_505241726_10240059673408871_4163331745019074848_n.jpg",
+      "/images/mural_murales_del_aeropuerto_2023-07-31_505128798_10240059672648852_980496466207861629_n.jpg",
+    ],
     location: "Aeropuerto A. B. Aragón, Palmira",
     year: 2023,
   },
   {
-    id: 6,
-    title: "Mural Restaurante Hotel Las Camelias",
-    description: "Obra mural que embellece el restaurante de un hotel turístico en Quindío.",
-    longDescription: "Este mural fue creado para ambientar el restaurante del hotel Las Camelias, integrando elementos de la cultura cafetera con motivos florales típicos de la región.",
+    id: 7,
+    title: "Mural anime y jazz",
+    description: "Mural con temática de anime y jazz, combinando cultura pop japonesa con música.",
+    longDescription: "Este mural fusiona la estética del anime con la vibra del jazz, creando una pieza única que celebra dos formas de arte distintas pero complementarias.",
     category: "mural",
-    image: "/images/1729094403863.jpg",
-    images: ["/images/1729094403863.jpg"],
-    location: "Hotel Las Camelias, Quindío",
+    image: "/images/mural_mural_anime_y_jazz_2020-10-08_121064455_10225802312183751_7605912708105540362_n.jpg",
+    images: [
+      "/images/mural_mural_anime_y_jazz_2020-10-08_121064455_10225802312183751_7605912708105540362_n.jpg",
+      "/images/mural_mural_anime_y_jazz_2020-10-08_121034913_10225802311863743_4449379518009335339_n.jpg",
+      "/images/mural_mural_anime_y_jazz_2020-10-20_122009356_10225901992635700_8628983404899876194_n.jpg",
+      "/images/mural_mural_anime_y_jazz_2020-10-20_122050536_10225901992875706_6951679479327619685_n.jpg",
+    ],
+    location: "Cali",
+    year: 2020,
+  },
+  {
+    id: 8,
+    title: "Mural cocina palmas",
+    description: "Mural de palmas tropicales para cocina, aportando frescura al espacio.",
+    longDescription: "Un mural diseñado para cocinas que busca traer la naturaleza al interior del hogar mediante palmas tropicales pintadas a mano.",
+    category: "mural",
+    image: "/images/mural_mural_cocina_palmas_2023-01-13_498336374_10239720004117351_2134616095515512935_n.jpg",
+    images: [
+      "/images/mural_mural_cocina_palmas_2023-01-13_498336374_10239720004117351_2134616095515512935_n.jpg",
+    ],
+    location: "Cali",
     year: 2023,
+  },
+  {
+    id: 9,
+    title: "Mural Doña Leo piscina",
+    description: "Mural para piscina con motivos tropicales y acuáticos.",
+    longDescription: "Este mural fue creado para el área de piscina de la residencia Doña Leo, combinando elementos acuáticos con la flora tropical del Valle del Cauca.",
+    category: "mural",
+    image: "/images/mural_Mural_do_a_leo_piscina_2025-05-30_503023629_18505005562050122_6838323277864976138_n.jpg",
+    images: [
+      "/images/mural_Mural_do_a_leo_piscina_2025-05-30_503023629_18505005562050122_6838323277864976138_n.jpg",
+      "/images/mural_Mural_do_a_leo_piscina_2025-05-30_502755710_18505005544050122_8283234430120107699_n.jpg",
+      "/images/mural_Mural_do_a_leo_piscina_2025-05-30_501727118_18505005553050122_6086512829538249647_n.jpg",
+    ],
+    location: "Cali",
+    year: 2025,
+  },
+  {
+    id: 10,
+    title: "Mural de doodles",
+    description: "Mural estilo doodle con ilustraciones divertidas y coloridas.",
+    longDescription: "Un mural en estilo doodle que llena el espacio de ilustraciones creativas y coloridas, perfecto para ambientes juveniles y dinámicos.",
+    category: "mural",
+    image: "/images/mural_mural_de_doodles_2022-02-13_488870469_10239114448338835_7388159595846848507_n.jpg",
+    images: [
+      "/images/mural_mural_de_doodles_2022-02-13_488870469_10239114448338835_7388159595846848507_n.jpg",
+      "/images/mural_mural_de_doodles_2022-02-12_488752762_10239108411867927_625275180538166608_n.jpg",
+    ],
+    location: "Cali",
+    year: 2022,
   },
 ];
 
@@ -103,12 +201,19 @@ const Projects = () => {
       const storedProjects = localStorage.getItem('projectsData');
       if (storedProjects) {
         try {
-          const parsedProjects = JSON.parse(storedProjects);
-          // Asegurarse de que hay proyectos válidos
+          let parsedProjects = JSON.parse(storedProjects);
           if (Array.isArray(parsedProjects) && parsedProjects.length > 0) {
-            setProjectsData(parsedProjects);
+            // ponytail: force sync with defaults — merge new projects and update images
+            const merged = defaultProjectsData.map(def => {
+              const cached = parsedProjects.find((p: Project) => p.id === def.id);
+              return cached ? { ...def, ...cached, images: def.images, image: def.image } : def;
+            });
+            // Add any cached projects not in defaults (admin-created)
+            const adminOnly = parsedProjects.filter((p: Project) => !defaultProjectsData.find(d => d.id === p.id));
+            const final = [...merged, ...adminOnly];
+            localStorage.setItem('projectsData', JSON.stringify(final));
+            setProjectsData(final);
           } else {
-            // Si no hay proyectos válidos, usar los por defecto
             localStorage.setItem('projectsData', JSON.stringify(defaultProjectsData));
             setProjectsData(defaultProjectsData);
           }
@@ -118,7 +223,6 @@ const Projects = () => {
           setProjectsData(defaultProjectsData);
         }
       } else {
-        // Si no hay proyectos en localStorage, usar los datos por defecto y guardarlos
         localStorage.setItem('projectsData', JSON.stringify(defaultProjectsData));
         setProjectsData(defaultProjectsData);
       }
@@ -182,7 +286,7 @@ const Projects = () => {
                   : 'bg-white text-gray-700 hover:bg-gray-100'
               }`}
             >
-              All Projects
+              Todos
             </button>
             <button
               onClick={() => setFilter('mural')}
@@ -192,7 +296,7 @@ const Projects = () => {
                   : 'bg-white text-gray-700 hover:bg-gray-100'
               }`}
             >
-              Murals
+              Murales
             </button>
             <button
               onClick={() => setFilter('interior')}
@@ -202,49 +306,14 @@ const Projects = () => {
                   : 'bg-white text-gray-700 hover:bg-gray-100'
               }`}
             >
-              Interior Decoration
+              Decoración Interior
             </button>
           </div>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredProjects.map((project) => (
-            <div key={project.id} className="bg-white rounded-lg overflow-hidden shadow-md group">
-              <div className="relative overflow-hidden h-64">
-                <img 
-                  src={project.image} 
-                  alt={project.title} 
-                  className="w-full h-full object-cover gallery-image" 
-                />
-              </div>
-              
-              <div className="p-6">
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-xl font-playfair font-bold">{project.title}</h3>
-                  <span className="text-xs px-2 py-1 bg-gray-100 rounded-full text-gray-700">
-                    {project.year}
-                  </span>
-                </div>
-                
-                <p className="text-gray-600 mb-4 font-montserrat text-sm">
-                  {project.description}
-                </p>
-                
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-500 font-montserrat">
-                    {project.location}
-                  </span>
-                  
-                  <button 
-                    onClick={() => openProjectDetails(project)}
-                    className="inline-flex items-center text-primary hover:text-primary/80 font-montserrat text-sm transition-colors duration-300"
-                  >
-                    View Details
-                    <ChevronRight size={16} className="ml-1" />
-                  </button>
-                </div>
-              </div>
-            </div>
+            <ProjectCard key={project.id} project={project} onOpen={openProjectDetails} />
           ))}
         </div>
       </div>
@@ -302,6 +371,99 @@ const Projects = () => {
         </DialogContent>
       </Dialog>
     </section>
+  );
+};
+
+// Componente de card con carrusel hover + flechas
+const ProjectCard = ({ project, onOpen }: { project: Project; onOpen: (p: Project) => void }) => {
+  const intervalRef = useRef<number | null>(null);
+  const [imgIndex, setImgIndex] = useState(0);
+  const images = project.images && project.images.length > 0 ? project.images : [project.image];
+
+  const goTo = (index: number) => {
+    const clamped = Math.max(0, Math.min(index, images.length - 1));
+    setImgIndex(clamped);
+  };
+
+  const startAutoScroll = () => {
+    if (images.length <= 1) return;
+    intervalRef.current = window.setInterval(() => {
+      setImgIndex(prev => (prev + 1) % images.length);
+    }, 1500);
+  };
+
+  const stopAutoScroll = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  };
+
+  useEffect(() => {
+    return () => stopAutoScroll();
+  }, []);
+
+  return (
+    <div
+      className="bg-white rounded-lg overflow-hidden shadow-md group"
+      onMouseEnter={startAutoScroll}
+      onMouseLeave={stopAutoScroll}
+    >
+      <div className="relative overflow-hidden h-64">
+        <div
+          className="flex h-full transition-transform duration-500 ease-in-out"
+          style={{ transform: `translateX(-${imgIndex * 100}%)`, width: `${images.length * 100}%` }}
+        >
+          {images.map((img, i) => (
+            <div key={i} style={{ width: `${100 / images.length}%` }} className="h-full flex-shrink-0">
+              <img
+                src={img}
+                alt={`${project.title} ${i + 1}`}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          ))}
+        </div>
+        {images.length > 1 && (
+          <>
+            <button
+              onClick={(e) => { e.stopPropagation(); goTo(imgIndex - 1); }}
+              className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10"
+            >
+              <ChevronLeft size={18} />
+            </button>
+            <button
+              onClick={(e) => { e.stopPropagation(); goTo(imgIndex + 1); }}
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10"
+            >
+              <ChevronRight size={18} />
+            </button>
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 z-10">
+              {images.map((_, i) => (
+                <div key={i} className={`w-1.5 h-1.5 rounded-full transition-colors ${i === imgIndex ? 'bg-white' : 'bg-white/50'}`} />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+
+      <div className="p-6">
+        <div className="flex justify-between items-start mb-2">
+          <h3 className="text-xl font-playfair font-bold">{project.title}</h3>
+          <span className="text-xs px-2 py-1 bg-gray-100 rounded-full text-gray-700">{project.year}</span>
+        </div>
+        <p className="text-gray-600 mb-4 font-montserrat text-sm">{project.description}</p>
+        <div className="flex justify-between items-center">
+          <span className="text-sm text-gray-500 font-montserrat">{project.location}</span>
+          <button
+            onClick={() => onOpen(project)}
+            className="inline-flex items-center text-primary hover:text-primary/80 font-montserrat text-sm transition-colors duration-300"
+          >
+            View Details <ChevronRight size={16} className="ml-1" />
+          </button>
+        </div>
+      </div>
+    </div>
   );
 };
 

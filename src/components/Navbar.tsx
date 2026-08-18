@@ -17,6 +17,7 @@ const Navbar = () => {
   const navLinks = [
     { name: 'Inicio', href: '#hero' },
     { name: 'Proyectos', href: '#projects' },
+    { name: 'Catálogo', href: '#catalog' },
     { name: 'Sobre mí', href: '#about' },
     { name: 'Testimonios', href: '#testimonials' },
     { name: 'Contacto', href: '#contact' },
@@ -37,7 +38,7 @@ const Navbar = () => {
         </Link>
 
         {/* Navegación de escritorio */}
-        <div className="hidden md:flex space-x-8">
+        <div className="hidden md:flex items-center space-x-8">
           {navLinks.map((link) => (
             <a
               key={link.name}
@@ -47,15 +48,30 @@ const Navbar = () => {
               {link.name}
             </a>
           ))}
+          
+          <Link
+            to="/admin"
+            className="bg-orange-500 hover:bg-orange-600 text-white font-montserrat text-sm font-medium px-5 py-2 rounded-full transition-colors duration-300"
+          >
+            Iniciar Sesión
+          </Link>
         </div>
 
         {/* Toggle menú móvil */}
-        <button
-          className="md:hidden text-gray-700"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          {isOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+        <div className="flex items-center gap-3 md:hidden">
+          <Link
+            to="/admin"
+            className="bg-orange-500 hover:bg-orange-600 text-white font-montserrat text-xs font-medium px-4 py-2 rounded-full transition-colors duration-300"
+          >
+            Login
+          </Link>
+          <button
+            className="text-gray-700"
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            {isOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </div>
 
       {/* Menú móvil */}

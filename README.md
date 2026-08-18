@@ -1,73 +1,169 @@
-# Welcome to your Lovable project
+# CARURA - Portafolio de Arte y Murales
 
-## Project info
+Sitio web portafolio para la artista Carura, especializada en murales y decoración interior. Permite展示 proyectos, recibir mensajes de contacto y gestionar el contenido desde un panel de administración.
 
-**URL**: https://lovable.dev/projects/8d3e92e3-12a7-4afc-807c-6b89b8e9f106
+## Tech Stack
 
-## How can I edit this code?
+- **Frontend:** React 18 + TypeScript + Vite
+- **Estilos:** Tailwind CSS + shadcn/ui
+- **Backend:** Supabase (Auth, Database, Storage)
+- **Routing:** React Router DOM
+- **Deploy:** GitHub Pages
 
-There are several ways of editing your application.
+## Estructura del Proyecto
 
-**Use Lovable**
+```
+src/
+├── components/
+│   ├── Navbar.tsx          # Barra de navegación con botón "Iniciar Sesión"
+│   ├── Hero.tsx            # Sección principal/banner
+│   ├── About.tsx           # Sobre la artista
+│   ├── Projects.tsx        # Galería de proyectos (lee de localStorage + Supabase)
+│   ├── Testimonials.tsx    # Testimonios de clientes
+│   ├── Contact.tsx         # Formulario de contacto → guarda en Supabase
+│   ├── Footer.tsx          # Pie de página
+│   ├── admin/
+│   │   ├── MessagesList.tsx    # Lista de mensajes (lee de Supabase)
+│   │   └── ProjectsManager.tsx # CRUD de proyectos + subida de imágenes
+│   └── ui/                 # Componentes shadcn/ui (botones, cards, etc.)
+├── pages/
+│   ├── Index.tsx           # Página principal
+│   ├── Admin.tsx           # Panel de administración (login con Supabase Auth)
+│   └── NotFound.tsx        # Página 404
+├── lib/
+│   ├── supabase.ts         # Cliente de Supabase
+│   └── utils.ts            # Utilidades (cn para Tailwind)
+├── data/
+│   └── projectsData.ts     # Datos de proyectos (no se usa, legacy)
+└── hooks/
+    ├── use-mobile.tsx      # Detecta si es móvil
+    └── use-toast.ts        # Hook de notificaciones
+```
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/8d3e92e3-12a7-4afc-807c-6b89b8e9f106) and start prompting.
+## Integración con Supabase
 
-Changes made via Lovable will be committed automatically to this repo.
+### Configuración
 
-**Use your preferred IDE**
+El cliente de Supabase está en `src/lib/supabase.ts`:
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+```ts
+import { createClient } from '@supabase/supabase-js';
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+const supabaseUrl = 'https://qavumxdxhfczrzrtojtq.supabase.co';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
 
-Follow these steps:
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### Tablas
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+**contact_messages** — Mensajes del formulario de contacto:
 
-# Step 3: Install the necessary dependencies.
-npm i
+| Columna | Tipo | Descripción |
+|---------|------|-------------|
+| id | uuid | ID único (auto-generado) |
+| name | text | Nombre del remitente |
+| email | text | Correo de contacto |
+| subject | text | Asunto del mensaje |
+| message | text | Contenido del mensaje |
+| created_at | timestamp | Fecha de creación |
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+SQL para crear la tabla:
+
+```sql
+create table if not exists contact_messages (
+  id uuid default gen_random_uuid() primary key,
+  name text not null,
+  email text not null,
+  subject text not null,
+  message text not null,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+alter table contact_messages enable row level security;
+
+create policy "Anyone can insert messages"
+  on contact_messages for insert with check (true);
+
+create policy "Authenticated users can read messages"
+  on contact_messages for select using (auth.role() = 'authenticated');
+
+create policy "Authenticated users can delete messages"
+  on contact_messages for delete using (auth.role() = 'authenticated');
+```
+
+### Storage
+
+**project-images** — Bucket público para imágenes de proyectos:
+
+- Nombre: `project-images`
+- Acceso: público
+- Estructura: `projects/{timestamp}-{random}.{ext}`
+
+### Autenticación
+
+- Login con email + contraseña (Supabase Auth)
+- Solo usuarios autenticados pueden acceder a `/admin`
+- Los mensajes de contacto solo son visibles para usuarios autenticados
+
+## Instalación
+
+```bash
+# Clonar el repositorio
+git clone https://github.com/nicothinn/vibrant-canvas-gallery.git
+cd vibrant-canvas-gallery
+
+# Instalar dependencias
+npm install
+
+# Iniciar servidor de desarrollo
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+El servidor corre en `http://localhost:5173` (o el siguiente puerto disponible).
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Scripts
 
-**Use GitHub Codespaces**
+| Comando | Descripción |
+|---------|-------------|
+| `npm run dev` | Servidor de desarrollo con hot-reload |
+| `npm run build` | Build de producción |
+| `npm run preview` | Preview del build |
+| `npm run deploy` | Deploy a GitHub Pages |
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Páginas
 
-## What technologies are used for this project?
+| Ruta | Descripción |
+|------|-------------|
+| `/` | Página principal (portafolio) |
+| `/admin` | Panel de administración (requiere login) |
 
-This project is built with:
+## Funcionalidades
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### Página Principal
+- Galería de proyectos con filtro por categoría
+- Modal de detalle con carrusel de imágenes
+- Formulario de contacto (guarda en Supabase)
+- Secciones: Hero, Proyectos, Sobre mí, Testimonios, Contacto
 
-## How can I deploy this project?
+### Panel Admin
+- Login con Supabase Auth (email + contraseña)
+- Gestión de mensajes de contacto (leer/eliminar)
+- Gestión de proyectos (crear/editar/eliminar)
+- Subida de imágenes directa a Supabase Storage
 
-Simply open [Lovable](https://lovable.dev/projects/8d3e92e3-12a7-4afc-807c-6b89b8e9f106) and click on Share -> Publish.
+## Deploy
 
-## Can I connect a custom domain to my Lovable project?
+### GitHub Pages
 
-Yes it is!
+```bash
+npm run deploy
+```
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+Esto ejecuta `vite build` y sube la carpeta `dist/` a la rama `gh-pages`.
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+URL: https://nicothinn.github.io/vibrant-canvas-gallery
+
+### Variables de Entorno
+
+No se requieren variables de entorno. Las credenciales de Supabase están hardcodeadas en `src/lib/supabase.ts` (es una app pública con RLS).

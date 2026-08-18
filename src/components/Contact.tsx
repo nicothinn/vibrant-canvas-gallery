@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { MapPin, Phone, Mail, Send } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
+import { toast } from 'sonner';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -8,17 +10,30 @@ const Contact = () => {
     subject: '',
     message: ''
   });
+  const [sending, setSending] = useState(false);
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Formulario enviado:', formData);
-    setFormData({ name: '', email: '', subject: '', message: '' });
-    alert('¡Gracias por tu mensaje! Te responderé pronto.');
+    setSending(true);
+    
+    const { error } = await supabase
+      .from('contact_messages')
+      .insert([formData]);
+    
+    if (error) {
+      toast.error('Error al enviar el mensaje. Intenta de nuevo.');
+      console.error('Supabase error:', error);
+    } else {
+      toast.success('¡Gracias por tu mensaje! Te responderé pronto.');
+      setFormData({ name: '', email: '', subject: '', message: '' });
+    }
+    
+    setSending(false);
   };
   
   return (
@@ -63,7 +78,7 @@ const Contact = () => {
                       Teléfono
                     </h4>
                     <p className="text-gray-600 font-montserrat">
-                      +57 311 238 4260
+                      +57 311 238 4260
                     </p>
                   </div>
                 </div>
@@ -166,9 +181,10 @@ const Contact = () => {
               
               <button
                 type="submit"
-                className="bg-primary hover:bg-primary/90 text-white font-montserrat py-3 px-6 rounded-md transition-all duration-300 inline-flex items-center"
+                disabled={sending}
+                className="bg-primary hover:bg-primary/90 text-white font-montserrat py-3 px-6 rounded-md transition-all duration-300 inline-flex items-center disabled:opacity-50"
               >
-                Enviar mensaje
+                {sending ? 'Enviando...' : 'Enviar mensaje'}
                 <Send size={18} className="ml-2" />
               </button>
             </form>

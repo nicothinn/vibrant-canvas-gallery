@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -14,10 +15,9 @@ import {
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { ChevronDown, Plus, Trash, Edit } from "lucide-react";
+import { ChevronDown, Plus, Trash, Edit, Upload } from "lucide-react";
 import { toast } from "sonner";
 
-// Definición de un proyecto
 interface Project {
   id: number;
   title: string;
@@ -36,6 +36,7 @@ export const ProjectsManager = () => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [uploading, setUploading] = useState(false);
   
   // Form state
   const [title, setTitle] = useState("");
@@ -48,7 +49,6 @@ export const ProjectsManager = () => {
   const [year, setYear] = useState<number>(new Date().getFullYear());
   
   useEffect(() => {
-    // Cargar proyectos del localStorage al iniciar
     const storedProjects = JSON.parse(localStorage.getItem('projectsData') || '[]');
     setProjects(storedProjects);
   }, []);
@@ -56,8 +56,6 @@ export const ProjectsManager = () => {
   const saveProjects = (updatedProjects: Project[]) => {
     localStorage.setItem('projectsData', JSON.stringify(updatedProjects));
     setProjects(updatedProjects);
-    
-    // Disparar evento personalizado para notificar cambios en la misma pestaña
     window.dispatchEvent(new CustomEvent('projectsUpdated'));
   };
 
@@ -71,8 +69,6 @@ export const ProjectsManager = () => {
   const handleEditProject = (project: Project) => {
     setIsEditing(true);
     setSelectedProject(project);
-    
-    // Establecer valores del formulario con los datos del proyecto
     setTitle(project.title);
     setDescription(project.description);
     setLongDescription(project.longDescription || "");
@@ -81,7 +77,6 @@ export const ProjectsManager = () => {
     setAdditionalImages(project.images || [""]);
     setLocation(project.location);
     setYear(project.year);
-    
     setIsDialogOpen(true);
   };
   
@@ -98,14 +93,57 @@ export const ProjectsManager = () => {
       toast.success("Proyecto eliminado correctamente");
     }
   };
+
+  // Subir imagen a Supabase Storage
+  const uploadImage = async (file: File): Promise<string | null> => {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+    const filePath = `projects/${fileName}`;
+
+    const { error } = await supabase.storage
+      .from('project-images')
+      .upload(filePath, file);
+
+    if (error) {
+      console.error('Error uploading:', error);
+      toast.error('Error al subir la imagen');
+      return null;
+    }
+
+    const { data } = supabase.storage
+      .from('project-images')
+      .getPublicUrl(filePath);
+
+    return data.publicUrl;
+  };
+
+  const handleMainImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    const url = await uploadImage(file);
+    if (url) setMainImage(url);
+    setUploading(false);
+  };
+
+  const handleAdditionalImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    const url = await uploadImage(file);
+    if (url) {
+      const newImages = [...additionalImages];
+      newImages[index] = url;
+      setAdditionalImages(newImages);
+    }
+    setUploading(false);
+  };
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Filtrar imágenes vacías
     const filteredAdditionalImages = additionalImages.filter(img => img.trim() !== "");
     
-    // Crear o actualizar el proyecto
     const projectData: Project = {
       id: isEditing && selectedProject ? selectedProject.id : Date.now(),
       title,
@@ -121,13 +159,11 @@ export const ProjectsManager = () => {
     let updatedProjects: Project[];
     
     if (isEditing && selectedProject) {
-      // Actualizar proyecto existente
       updatedProjects = projects.map((p) => 
         p.id === selectedProject.id ? projectData : p
       );
       toast.success("Proyecto actualizado correctamente");
     } else {
-      // Crear nuevo proyecto
       updatedProjects = [...projects, projectData];
       toast.success("Proyecto creado correctamente");
     }
@@ -235,8 +271,6 @@ export const ProjectsManager = () => {
       )}
       
       {/* Dialog para añadir/editar proyecto */}
-      
-      {/* Dialog para añadir/editar proyecto */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
@@ -263,29 +297,15 @@ export const ProjectsManager = () => {
                 <label className="text-sm font-medium" htmlFor="category">Categoría</label>
                 <Popover>
                   <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      className="w-full justify-between"
-                    >
+                    <Button variant="outline" role="combobox" className="w-full justify-between">
                       {category === "mural" ? "Mural" : "Interior Design"}
                       <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-full p-0">
                     <div className="flex flex-col">
-                      <button
-                        className="px-4 py-2 text-left hover:bg-gray-100"
-                        onClick={() => setCategory("mural")}
-                      >
-                        Mural
-                      </button>
-                      <button
-                        className="px-4 py-2 text-left hover:bg-gray-100"
-                        onClick={() => setCategory("interior")}
-                      >
-                        Interior Design
-                      </button>
+                      <button className="px-4 py-2 text-left hover:bg-gray-100" onClick={() => setCategory("mural")}>Mural</button>
+                      <button className="px-4 py-2 text-left hover:bg-gray-100" onClick={() => setCategory("interior")}>Interior Design</button>
                     </div>
                   </PopoverContent>
                 </Popover>
@@ -294,74 +314,50 @@ export const ProjectsManager = () => {
             
             <div className="space-y-2">
               <label className="text-sm font-medium" htmlFor="description">Descripción Corta</label>
-              <Textarea
-                id="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Breve descripción del proyecto"
-                required
-              />
+              <Textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Breve descripción del proyecto" required />
             </div>
             
             <div className="space-y-2">
               <label className="text-sm font-medium" htmlFor="longDescription">Descripción Larga</label>
-              <Textarea
-                id="longDescription"
-                value={longDescription}
-                onChange={(e) => setLongDescription(e.target.value)}
-                placeholder="Descripción detallada del proyecto"
-                className="min-h-[120px]"
-              />
+              <Textarea id="longDescription" value={longDescription} onChange={(e) => setLongDescription(e.target.value)} placeholder="Descripción detallada del proyecto" className="min-h-[120px]" />
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium" htmlFor="location">Ubicación</label>
-                <Input
-                  id="location"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  placeholder="Ubicación del proyecto"
-                  required
-                />
+                <Input id="location" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Ubicación del proyecto" required />
               </div>
-              
               <div className="space-y-2">
                 <label className="text-sm font-medium" htmlFor="year">Año</label>
-                <Input
-                  id="year"
-                  type="number"
-                  value={year}
-                  onChange={(e) => setYear(parseInt(e.target.value))}
-                  min={2000}
-                  max={2100}
-                  required
-                />
+                <Input id="year" type="number" value={year} onChange={(e) => setYear(parseInt(e.target.value))} min={2000} max={2100} required />
               </div>
             </div>
             
+            {/* Imagen principal */}
             <div className="space-y-2">
-              <label className="text-sm font-medium" htmlFor="mainImage">Imagen Principal (URL)</label>
-              <Input
-                id="mainImage"
-                value={mainImage}
-                onChange={(e) => setMainImage(e.target.value)}
-                placeholder="https://ejemplo.com/imagen.jpg"
-                required
-              />
+              <label className="text-sm font-medium">Imagen Principal</label>
+              <div className="flex items-center gap-3">
+                <Input
+                  value={mainImage}
+                  onChange={(e) => setMainImage(e.target.value)}
+                  placeholder="URL de la imagen o súbela"
+                />
+                <label className="cursor-pointer">
+                  <input type="file" accept="image/*" className="hidden" onChange={handleMainImageUpload} />
+                  <Button type="button" variant="outline" size="sm" asChild>
+                    <span><Upload size={16} />{uploading ? '...' : 'Subir'}</span>
+                  </Button>
+                </label>
+              </div>
+              {mainImage && <img src={mainImage} alt="Preview" className="w-32 h-32 object-cover rounded mt-2" />}
             </div>
             
+            {/* Imágenes adicionales */}
             <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <label className="text-sm font-medium">Imágenes Adicionales (URLs)</label>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={handleAddImageField}
-                >
-                  <Plus size={16} />
-                  Añadir Imagen
+                <label className="text-sm font-medium">Imágenes Adicionales</label>
+                <Button type="button" variant="outline" size="sm" onClick={handleAddImageField}>
+                  <Plus size={16} /> Añadir
                 </Button>
               </div>
               
@@ -370,15 +366,15 @@ export const ProjectsManager = () => {
                   <Input
                     value={image}
                     onChange={(e) => handleImageChange(index, e.target.value)}
-                    placeholder="https://ejemplo.com/imagen.jpg"
+                    placeholder="URL o sube una imagen"
                   />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleRemoveImageField(index)}
-                    className="shrink-0"
-                  >
+                  <label className="cursor-pointer">
+                    <input type="file" accept="image/*" className="hidden" onChange={(e) => handleAdditionalImageUpload(e, index)} />
+                    <Button type="button" variant="outline" size="sm" asChild>
+                      <span><Upload size={14} /></span>
+                    </Button>
+                  </label>
+                  <Button type="button" variant="ghost" size="sm" onClick={() => handleRemoveImageField(index)}>
                     <Trash size={16} className="text-red-500" />
                   </Button>
                 </div>
@@ -389,7 +385,7 @@ export const ProjectsManager = () => {
               <DialogClose asChild>
                 <Button variant="outline" type="button">Cancelar</Button>
               </DialogClose>
-              <Button type="submit">
+              <Button type="submit" disabled={uploading}>
                 {isEditing ? "Actualizar Proyecto" : "Crear Proyecto"}
               </Button>
             </DialogFooter>
